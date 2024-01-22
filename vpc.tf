@@ -21,8 +21,40 @@ resource "aws_security_group" "allow_ignite_ports" {
 
   ingress {
    description = "HTTPS ingress"
-   from_port   = 443
-   to_port     = 443
+   from_port   = 8080
+   to_port     = 8080
+   protocol    = "tcp"
+   cidr_blocks = ["0.0.0.0/0"]
+ }
+
+   ingress {
+   description = "11211"
+   from_port   = 11211
+   to_port     = 11211
+   protocol    = "tcp"
+   cidr_blocks = ["0.0.0.0/0"]
+ }
+
+   ingress {
+   description = "47100"
+   from_port   = 47100
+   to_port     = 47100
+   protocol    = "tcp"
+   cidr_blocks = ["0.0.0.0/0"]
+ }
+
+    ingress {
+   description = "47500"
+   from_port   = 47500
+   to_port     = 47500
+   protocol    = "tcp"
+   cidr_blocks = ["0.0.0.0/0"]
+ }
+
+     ingress {
+   description = "49112"
+   from_port   = 49112
+   to_port     = 49112
    protocol    = "tcp"
    cidr_blocks = ["0.0.0.0/0"]
  }

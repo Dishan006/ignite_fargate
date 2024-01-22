@@ -14,7 +14,7 @@ resource "aws_lb_listener" "ignite-nlb-listener-11211" {
   load_balancer_arn = aws_lb.ignite-nlb.arn
 
   protocol          = "TCP"
-  port              = 11211
+  port              = 8080
 
   default_action {
     type             = "forward"
@@ -23,7 +23,7 @@ resource "aws_lb_listener" "ignite-nlb-listener-11211" {
 }
 
 resource "aws_lb_target_group" "ignite-nlb-target-group-11211" {
-  port        = 11211
+  port        = 8080
   protocol    = "TCP"
   vpc_id      = module.vpc.vpc_id
   target_type = "ip"
@@ -32,6 +32,10 @@ resource "aws_lb_target_group" "ignite-nlb-target-group-11211" {
   depends_on = [
     aws_lb.ignite-nlb
   ]
+
+    target_health_state {
+    enable_unhealthy_connection_termination = false
+  }
 
   lifecycle {
     create_before_destroy = true

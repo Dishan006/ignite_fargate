@@ -13,9 +13,7 @@ resource "aws_ecs_task_definition" "apache-ignite-example-task-definition" {
   
   container_definitions = jsonencode([{
     name      = "apache-ignite-container"
-    image     = "apacheignite/ignite:2.11.0"
-    //image     = "public.ecr.aws/amazonlinux/amazonlinux:latest"
-    //commad = [""]
+    image     = "apacheignite/ignite:2.16.0"
     essential = true
     security_groups = [aws_security_group.allow_ignite_ports.id]
             logConfiguration: {
@@ -32,6 +30,35 @@ resource "aws_ecs_task_definition" "apache-ignite-example-task-definition" {
           containerPath: "/app/efs"
         }
       ]
+     environment: [
+                {
+                    name: "IGNITE_WORK_DIR",
+                    value: "/app/efs"
+                },
+                {
+                    name: "OPTION_LIBS",
+                    value: "ignite-rest-http"
+                },
+                {
+                    name: "IGNITE_QUIET",
+                    value: "false"
+                }
+            ]
+
+    healthCheck = {
+      retries = 10
+     // command = [ "CMD-SHELL", "curl -f http://localhost:8080/ignite?cmd=version || exit 1" ]
+      command = [ "CMD-SHELL", "ls -altr || exit 1" ]
+      timeout: 5
+      interval: 10
+      startPeriod: 60
+    }
+/*
+    command: [
+     "/bin/bash",
+     "-c",
+     "apk add curl"
+    ]*/
 
     portMappings = [{
       protocol      = "tcp"
@@ -52,7 +79,12 @@ resource "aws_ecs_task_definition" "apache-ignite-example-task-definition" {
         protocol      = "tcp"
         containerPort = 49112
         hostPort      = 49112
-      }
+      },
+      {
+      protocol      = "tcp"
+      containerPort = 8080
+      hostPort      = 8080
+      },
   ] }])
 
 
@@ -84,7 +116,7 @@ resource "aws_ecs_service" "apache-ignite-service" {
  load_balancer {
    target_group_arn = aws_lb_target_group.ignite-nlb-target-group-11211.arn 
    container_name   = "apache-ignite-container"
-   container_port   = 11211
+   container_port   = 8080
  }
 }
 resource "aws_cloudwatch_log_group" "ignite-cluster-logs" {
