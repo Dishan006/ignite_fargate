@@ -20,7 +20,7 @@ resource "aws_ecs_task_definition" "apache-ignite-example-task-definition" {
         logDriver: "awslogs",
           options: {
             awslogs-group: "/ecs/ignite-cluster",
-            awslogs-region: "eu-west-2",
+            awslogs-region: var.aws_region,
             awslogs-stream-prefix: "ecs"
           }
         },
@@ -37,11 +37,15 @@ resource "aws_ecs_task_definition" "apache-ignite-example-task-definition" {
                 },
                 {
                     name: "OPTION_LIBS",
-                    value: "ignite-rest-http"
+                    value: "ignite-rest-http, ignite-aws, ignite-log4j, ignite-spring, ignite-indexing"
                 },
                 {
                     name: "IGNITE_QUIET",
                     value: "false"
+                },
+                {
+                    name: "CONFIG_URI",
+                    value: "https://${aws_s3_bucket.s3_config_bucket.bucket_domain_name}/${aws_s3_object.ignite_config.id}"
                 }
             ]
 
@@ -101,7 +105,7 @@ resource "aws_ecs_service" "apache-ignite-service" {
  name                               = "apache-ignite-service"
  cluster                            = aws_ecs_cluster.apache-ignite-example-cluster.id
  task_definition                    = aws_ecs_task_definition.apache-ignite-example-task-definition.arn
- desired_count                      = 2
+ desired_count                      = 3
  deployment_minimum_healthy_percent = 50
  deployment_maximum_percent         = 200
  launch_type                        = "FARGATE"

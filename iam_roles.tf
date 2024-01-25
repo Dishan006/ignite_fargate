@@ -36,6 +36,13 @@ resource "aws_iam_policy" "efs" {
                 "elasticfilesystem:CreateFileSystem"
            ],
            "Resource": "*"
+       },
+       {
+           "Effect": "Allow",
+           "Action": "s3:*",
+           "Resource": [
+            "arn:aws:s3:::${aws_s3_bucket.s3_data_bucket.bucket}/*",
+            "arn:aws:s3:::${aws_s3_bucket.s3_data_bucket.bucket}"]
        }
    ]
 }
