@@ -1,7 +1,7 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "Ignite-Example-VPC"
+  name = "ignite-cluster-example-vpc"
   cidr = "10.0.0.0/16"
 
   azs             = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
@@ -20,7 +20,7 @@ resource "aws_security_group" "allow_ignite_ports" {
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-   description = "HTTPS ingress"
+   description = "REST API ingress from anywhere"
    from_port   = 8080
    to_port     = 8080
    protocol    = "tcp"
@@ -32,7 +32,7 @@ resource "aws_security_group" "allow_ignite_ports" {
    from_port   = 11211
    to_port     = 11211
    protocol    = "tcp"
-   cidr_blocks = ["0.0.0.0/0"]
+   self = true
  }
 
    ingress {
@@ -40,7 +40,7 @@ resource "aws_security_group" "allow_ignite_ports" {
    from_port   = 47100
    to_port     = 47100
    protocol    = "tcp"
-   cidr_blocks = ["0.0.0.0/0"]
+   self = true
  }
 
     ingress {
@@ -48,7 +48,7 @@ resource "aws_security_group" "allow_ignite_ports" {
    from_port   = 47500
    to_port     = 47500
    protocol    = "tcp"
-   cidr_blocks = ["0.0.0.0/0"]
+   self = true
  }
 
      ingress {
@@ -56,7 +56,7 @@ resource "aws_security_group" "allow_ignite_ports" {
    from_port   = 49112
    to_port     = 49112
    protocol    = "tcp"
-   cidr_blocks = ["0.0.0.0/0"]
+   self = true
  }
 
 egress {

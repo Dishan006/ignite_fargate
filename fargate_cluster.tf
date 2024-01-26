@@ -57,12 +57,6 @@ resource "aws_ecs_task_definition" "apache-ignite-example-task-definition" {
       interval: 10
       startPeriod: 60
     }
-/*
-    command: [
-     "/bin/bash",
-     "-c",
-     "apk add curl"
-    ]*/
 
     portMappings = [{
       protocol      = "tcp"
@@ -105,7 +99,7 @@ resource "aws_ecs_service" "apache-ignite-service" {
  name                               = "apache-ignite-service"
  cluster                            = aws_ecs_cluster.apache-ignite-example-cluster.id
  task_definition                    = aws_ecs_task_definition.apache-ignite-example-task-definition.arn
- desired_count                      = 3
+ desired_count                      = var.cluster_node_count
  deployment_minimum_healthy_percent = 50
  deployment_maximum_percent         = 200
  launch_type                        = "FARGATE"
